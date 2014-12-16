@@ -7,10 +7,10 @@
 Author:: Yuta Aoyagi
 Since:: 2014-12-06
 
-    usage> ruby git-commit-at.rb (rev)
+    usage> ruby git-commit-at.rb <commit>
 
 このスクリプトを起動すると<tt>git commit -v</tt>が起動されるが、
-そこで作成されるコミットは+rev+と同一のAuthor dateをもつ。
+そこで作成されるコミットは<tt><commit></tt>と同一のAuthor dateをもつ。
 =end
 
 s = `git cat-file commit #{$*[0]}`
