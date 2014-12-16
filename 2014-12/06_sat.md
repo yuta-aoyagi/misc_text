@@ -8,3 +8,5 @@ git-commit-at.rb
 --------------
 
 上記を実現するコードが[../bin/git-commit-at.rb](../bin/git-commit-at.rb)にある。
+
+このファイルは元はRubyのソースファイル`06_sat.rb`だったが、コードを適切な名前のファイルに移した結果コードが残らなかったのでMarkdownに置き換えた。
