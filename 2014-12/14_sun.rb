@@ -30,6 +30,11 @@ Since:: 2014-12-04 12:13:03 JST (※後述)
 MiniTestには類似物がなさそうだったので自作したわけだ。
 (なお、RSpecをそのまま使わずにMiniTestに移植する道を選んだのは、宗教上の理由でRSpecは使えないからである)
 
+== 構成ファイル
+
+- lib/minitest-supplement.rb: `require`などで読み込まれるべきファイル
+- このファイル: 使い方の例とテスト
+
 == 使い方
 使い方そのものは下のTestAssertFail#test_assert_fail_succeedsやTestAssertFail#test_use_assert_fail_simplyを参照。
 
@@ -46,7 +51,7 @@ MiniTest 5.4.2でしかテストしてない。
 MiniTest::Assertionsの内部にベタベタに依存したコードなので、MiniTestの実装が変わるたびに見直す必要がある。
 まあ、そういうコードをこのファイルにまとめたというだけでもマシではないかと。
 
-== ※Sinceの時刻古くね？　というかその精度は何だ？
+== minitest-supplement.rbに書いてるSinceの時刻古くね？　というかその精度は何だ？
 この時刻のコミットに、
 
     def assert_fails(&block)
@@ -56,7 +61,7 @@ MiniTest::Assertionsの内部にベタベタに依存したコードなので、
 というコードがある。
 これがこの実装の原点であった。
 04_thu.md[04_thu.md]で「今日はもうちょっと違うことをやってたけど」というのはこれのこと。
-下の実装が10行にまで成長したのは、
+minitest-supplement.rbの実装が10行にまで成長したのは、
 
 - 上の手抜き実装ではブロック内でskipを呼んだときassert_failsが不正に成功してしまうこと
 - assert_raisesがデフォルトで生成するメッセージが気に入らない
@@ -64,31 +69,13 @@ MiniTest::Assertionsの内部にベタベタに依存したコードなので、
 への対応を行ったため。
 
 == あとがき(コードの後には置けないのでここで勘弁して)
-「10行のメソッドでこんなハックしたぜ」な記事が150行超えてるんですかね？？
+「10行のメソッドでこんなハックしたぜ」な記事が(テスト含めて)150行超えてるんですかね？？
 ではまた次回(明日とはもう言わない)。
 =end
 
 require 'rubygems'
 require 'minitest'
-
-module MiniTest
-  module Assertions
-    ##
-    # 与えられたブロックを実行してMiniTestレベルの失敗が発生しなかったら失敗する。
-    # MiniTestの失敗でない例外が発生しても失敗する。
-    # 発生したMiniTestの失敗を返すので、呼び出し側でメッセージの検査などを追加してもよい。
-    def assert_fail(msg = nil)
-      msg += ".\n" if msg
-      begin
-        yield
-      rescue Exception => e
-        return e if e.instance_of?(MiniTest::Assertion)
-        flunk exception_details(e, "#{msg}Expected to fail assertion, but raised")
-      end
-      flunk "#{msg}Expected to fail assertion, but didn't."
-    end
-  end
-end
+require File.expand_path('../lib/minitest-supplement.rb', File.dirname(__FILE__))
 
 if $0 == __FILE__
   MiniTest.autorun
