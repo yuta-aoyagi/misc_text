@@ -1,0 +1,7 @@
+#!/usr/bin/ruby -WKu
+# -*- coding: utf-8 -*-
+
+s = `ruby -WKu #{File.join(File.dirname(__FILE__), 'staged-mtimes.rb')}`
+a = IO.readlines($*[0])
+abort("bad default") until a.delete_at(0) == "\n"
+open($*[0], 'wb') {|io| io << (["\n\n", s] + a).join}
